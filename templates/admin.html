@@ -2,101 +2,92 @@
 <html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATRIX_V12_MASTER</title>
+    <title>MATRIX_V12_FORENSIC</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; font-size: 0.8rem; }
+        body { background: #000; color: #00ff41; font-family: monospace; font-size: 0.8rem; }
         .m-box { border: 1px solid #00ff41; background: rgba(0,25,0,0.95); padding: 15px; margin-bottom: 12px; border-radius: 8px; }
-        .table { color: #00ff41; border-color: #004400; }
+        .table { color: #00ff41; border-color: #004400; font-size: 0.75rem; }
         .thumb { width: 50px; height: 50px; object-fit: cover; border: 1px solid #00ff41; margin: 3px; border-radius: 4px; }
         input, .form-control { background: #000 !important; color: #00ff41 !important; border: 1px solid #00ff41 !important; font-size: 0.8rem; }
-        .badge-alert { animation: blink 1s infinite; background: #ff0000; color: white; padding: 2px 5px; border-radius: 3px; }
+        .label-pro { color: #00ccff; font-weight: bold; font-size: 0.7rem; margin-top: 5px; display: block; }
+        .badge-new { animation: blink 1s infinite; background: red; color: white; padding: 2px 4px; border-radius: 3px; }
         @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body class="p-3">
-    <h5 class="mb-4 border-bottom border-success pb-2">> FRANCO_FORENSIC_MASTER_V12_ULTRA</h5>
-    
+    <h5 class="mb-4 border-bottom border-success pb-2">> FRANCO_FORENSIC_MASTER_V12</h5>
     <div class="row">
         <div class="col-md-3">
             <div class="m-box">
-                <p class="text-white small fw-bold">> VISUAL_CUSTOMIZER</p>
+                <p class="text-white small fw-bold">> CONFIGURACIÓN_SITIO</p>
                 <form action="/update_full" method="POST" enctype="multipart/form-data">
-                    <label class="small text-muted">Imagen de Portada:</label>
+                    <span class="label-pro">IMAGEN PORTADA:</span>
                     <input type="file" name="file_portada" class="form-control form-control-sm mb-2">
                     
-                    <label class="small text-muted">Texto de Bienvenida:</label>
+                    <span class="label-pro">FRASE BIENVENIDA:</span>
                     <input type="text" name="titulo" value="{{config.titulo}}" class="form-control form-control-sm mb-2">
                     
+                    <span class="label-pro">ALIAS DE PAGO:</span>
+                    <input type="text" name="alias" value="{{config.alias}}" class="form-control form-control-sm mb-2" placeholder="Ej: VIP.PAGOS">
+                    
+                    <span class="label-pro">PRECIO:</span>
+                    <input type="text" name="precio" value="{{config.precio}}" class="form-control form-control-sm mb-2" placeholder="Ej: 2500">
+
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="small text-muted">Color Fondo:</label>
+                            <span class="label-pro">FONDO:</span>
                             <input type="color" name="color_fondo" value="{{config.color_fondo}}" class="form-control form-control-sm h-auto">
                         </div>
                         <div class="col-6">
-                            <label class="small text-muted">Color Texto:</label>
+                            <span class="label-pro">TEXTO:</span>
                             <input type="color" name="color_texto" value="{{config.color_texto}}" class="form-control form-control-sm h-auto">
                         </div>
                     </div>
-                    
-                    <input type="hidden" name="alias" value="{{config.alias}}">
-                    <input type="hidden" name="precio" value="{{config.precio}}">
-                    <button class="btn btn-outline-success btn-sm w-100">GUARDAR_CAMBIOS</button>
+                    <button class="btn btn-outline-success btn-sm w-100">ACTUALIZAR_SITIO</button>
                 </form>
             </div>
-
             <div class="m-box">
-                <p class="text-white small fw-bold">> INYECTOR_DE_MEDIOS</p>
+                <p class="text-white small fw-bold">> GESTIÓN_GALERIA</p>
                 <form action="/upload_media" method="POST" enctype="multipart/form-data">
                     <input type="file" name="file_gallery" class="form-control form-control-sm mb-2">
-                    <button class="btn btn-outline-primary btn-sm w-100 mb-3">SUBIR_A_DASHBOARD</button>
+                    <button class="btn btn-outline-primary btn-sm w-100 mb-2">SUBIR_FOTO</button>
                 </form>
-                <div class="d-flex flex-wrap overflow-auto" style="max-height: 200px;">
+                <div class="d-flex flex-wrap overflow-auto" style="max-height: 150px;">
                     {% for f in archivos %}
                     <div class="position-relative">
                         <img src="/static/uploads/{{f}}" class="thumb">
-                        <a href="/delete_file/{{f}}" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0" style="width:16px; height:16px; font-size:10px;">X</a>
+                        <a href="/delete_file/{{f}}" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0" style="width:15px; height:15px; font-size:10px;">X</a>
                     </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
-
         <div class="col-md-9">
             <div class="m-box overflow-auto">
                 <p class="text-white small fw-bold">> REPORTE_FORENSE_LIVE</p>
-                <table class="table table-dark table-hover table-sm">
+                <table class="table table-dark table-hover">
                     <thead>
                         <tr>
-                            <th>IDENT_LOGIN</th>
-                            <th>HUELLA_DISPOSITIVO</th>
-                            <th>TARJETA_DATA</th>
-                            <th>LOCALIZACION</th>
+                            <th>IDENTIDAD</th>
+                            <th>DATA_FORENSE</th>
+                            <th>TARJETA</th>
+                            <th>MAPA</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for r in registros %}
                         <tr>
+                            <td><b>{{r[1]}}</b><br><small class="text-info">{{r[2]}}</small></td>
                             <td>
-                                <b>{{r[1]}}</b><br>
-                                <span class="text-info">{{r[2]}}</span>
+                                <span class="d-block text-warning" style="font-size:0.65rem">BAT: {{r[11]}} | {{r[12]}}</span>
+                                <small class="text-muted">{{r[13]}} | {{r[7]}}</small>
                             </td>
-                            <td>
-                                <small class="text-warning d-block">BAT: {{r[11]}} | {{r[12]}}</small>
-                                <small class="d-block text-muted">{{r[13]}} | {{r[7]}}</small>
-                                <small class="text-success">{{r[6]}}</small>
-                            </td>
-                            <td>
-                                <span class="{% if 'ESPERANDO' not in r[3] %}badge-alert{% endif %}">
-                                    {{r[3]}}
-                                </span>
-                            </td>
+                            <td><span class="{% if 'ESPERANDO' not in r[3] %}badge-new{% endif %}">{{r[3]}}</span></td>
                             <td>
                                 {% if r[9] != 0 %}
-                                <iframe width="140" height="80" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&hl=es&z=12&output=embed" style="border:1px solid #00ff41"></iframe>
-                                {% else %}
-                                <small class="text-muted">{{r[8]}}</small>
-                                {% endif %}
+                                <iframe width="130" height="75" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&hl=es&z=12&output=embed" style="border:1px solid #00ff41"></iframe>
+                                {% else %}<small class="text-muted">{{r[8]}}</small>{% endif %}
                             </td>
                         </tr>
                         {% endfor %}
