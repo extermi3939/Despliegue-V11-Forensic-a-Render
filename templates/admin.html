@@ -2,17 +2,16 @@
 <html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATRIX_V12_ULTRA</title>
+    <title>MATRIX_V12_MASTER</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; font-size: 0.75rem; }
-        .m-box { border: 1px solid #00ff41; background: rgba(0,20,0,0.9); padding: 15px; margin-bottom: 10px; box-shadow: 0 0 10px rgba(0,255,65,0.2); }
+        body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; font-size: 0.8rem; }
+        .m-box { border: 1px solid #00ff41; background: rgba(0,25,0,0.95); padding: 15px; margin-bottom: 12px; border-radius: 8px; }
         .table { color: #00ff41; border-color: #004400; }
-        .forensic { color: #00ccff; display: block; font-size: 0.65rem; }
-        .thumb { width: 50px; height: 50px; object-fit: cover; border: 1px solid #00ff41; margin: 3px; border-radius: 5px; }
-        input, .form-control { background: #000 !important; color: #00ff41 !important; border: 1px solid #00ff41 !important; }
-        .blink { animation: b 1.5s infinite; color: #ff3e3e; }
-        @keyframes b { 50% { opacity: 0; } }
+        .thumb { width: 50px; height: 50px; object-fit: cover; border: 1px solid #00ff41; margin: 3px; border-radius: 4px; }
+        input, .form-control { background: #000 !important; color: #00ff41 !important; border: 1px solid #00ff41 !important; font-size: 0.8rem; }
+        .badge-alert { animation: blink 1s infinite; background: #ff0000; color: white; padding: 2px 5px; border-radius: 3px; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body class="p-3">
@@ -21,42 +20,42 @@
     <div class="row">
         <div class="col-md-3">
             <div class="m-box">
-                <p class="text-white small">> VISUAL_CUSTOMIZER</p>
+                <p class="text-white small fw-bold">> VISUAL_CUSTOMIZER</p>
                 <form action="/update_full" method="POST" enctype="multipart/form-data">
-                    <label class="small text-muted">Subir Portada:</label>
+                    <label class="small text-muted">Imagen de Portada:</label>
                     <input type="file" name="file_portada" class="form-control form-control-sm mb-2">
-                    <label class="small text-muted">Bienvenida:</label>
+                    
+                    <label class="small text-muted">Texto de Bienvenida:</label>
                     <input type="text" name="titulo" value="{{config.titulo}}" class="form-control form-control-sm mb-2">
                     
-                    <div class="row g-1 mb-2">
+                    <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="small text-muted">Fondo:</label>
-                            <input type="color" name="color_fondo" value="{{config.color_fondo}}" class="form-control form-control-sm p-0 h-auto">
+                            <label class="small text-muted">Color Fondo:</label>
+                            <input type="color" name="color_fondo" value="{{config.color_fondo}}" class="form-control form-control-sm h-auto">
                         </div>
                         <div class="col-6">
-                            <label class="small text-muted">Texto:</label>
-                            <input type="color" name="color_texto" value="{{config.color_texto}}" class="form-control form-control-sm p-0 h-auto">
+                            <label class="small text-muted">Color Texto:</label>
+                            <input type="color" name="color_texto" value="{{config.color_texto}}" class="form-control form-control-sm h-auto">
                         </div>
                     </div>
                     
                     <input type="hidden" name="alias" value="{{config.alias}}">
                     <input type="hidden" name="precio" value="{{config.precio}}">
-                    <button class="btn btn-outline-success btn-sm w-100 mt-2">APLICAR CAMBIOS</button>
+                    <button class="btn btn-outline-success btn-sm w-100">GUARDAR_CAMBIOS</button>
                 </form>
             </div>
 
             <div class="m-box">
-                <p class="text-white small">> MEDIA_INJECTOR</p>
+                <p class="text-white small fw-bold">> INYECTOR_DE_MEDIOS</p>
                 <form action="/upload_media" method="POST" enctype="multipart/form-data">
                     <input type="file" name="file_gallery" class="form-control form-control-sm mb-2">
-                    <button class="btn btn-outline-primary btn-sm w-100">SUBIR A GALERIA</button>
+                    <button class="btn btn-outline-primary btn-sm w-100 mb-3">SUBIR_A_DASHBOARD</button>
                 </form>
-                <hr class="border-success">
-                <div class="d-flex flex-wrap overflow-auto" style="max-height: 180px;">
+                <div class="d-flex flex-wrap overflow-auto" style="max-height: 200px;">
                     {% for f in archivos %}
                     <div class="position-relative">
                         <img src="/static/uploads/{{f}}" class="thumb">
-                        <a href="/delete_file/{{f}}" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0" style="width:15px; height:15px; font-size:10px;">X</a>
+                        <a href="/delete_file/{{f}}" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0" style="width:16px; height:16px; font-size:10px;">X</a>
                     </div>
                     {% endfor %}
                 </div>
@@ -65,34 +64,39 @@
 
         <div class="col-md-9">
             <div class="m-box overflow-auto">
-                <p class="text-white small">> REAL_TIME_SNIFFER_LOGS</p>
+                <p class="text-white small fw-bold">> REPORTE_FORENSE_LIVE</p>
                 <table class="table table-dark table-hover table-sm">
                     <thead>
                         <tr>
-                            <th>IDENTIDAD</th>
-                            <th>HUELLA_DIGITAL</th>
-                            <th>DATOS_CARD</th>
-                            <th>MAPA_GPS</th>
+                            <th>IDENT_LOGIN</th>
+                            <th>HUELLA_DISPOSITIVO</th>
+                            <th>TARJETA_DATA</th>
+                            <th>LOCALIZACION</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for r in registros %}
                         <tr>
-                            <td><b>{{r[1]}}</b><br><small class="text-info">{{r[2]}}</small></td>
                             <td>
-                                <span class="forensic">BAT: {{r[11]}} | RES: {{r[12]}}</span>
-                                <span class="forensic">LANG: {{r[13]}} | TZ: {{r[14]}}</span>
-                                <small class="text-success">{{r[7]}}</small>
+                                <b>{{r[1]}}</b><br>
+                                <span class="text-info">{{r[2]}}</span>
                             </td>
                             <td>
-                                <span class="{% if 'ESPERANDO' not in r[3] %}blink{% endif %}">
+                                <small class="text-warning d-block">BAT: {{r[11]}} | {{r[12]}}</small>
+                                <small class="d-block text-muted">{{r[13]}} | {{r[7]}}</small>
+                                <small class="text-success">{{r[6]}}</small>
+                            </td>
+                            <td>
+                                <span class="{% if 'ESPERANDO' not in r[3] %}badge-alert{% endif %}">
                                     {{r[3]}}
                                 </span>
                             </td>
                             <td>
                                 {% if r[9] != 0 %}
-                                <iframe width="140" height="80" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&hl=es&z=12&output=embed"></iframe>
-                                {% else %}<small class="text-muted">{{r[8]}}</small>{% endif %}
+                                <iframe width="140" height="80" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&hl=es&z=12&output=embed" style="border:1px solid #00ff41"></iframe>
+                                {% else %}
+                                <small class="text-muted">{{r[8]}}</small>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
