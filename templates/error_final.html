@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sincronización Finalizada</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { 
+            background: #000; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .final-card {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid gold;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+        }
+        .check-icon {
+            font-size: 50px;
+            color: gold;
+            margin-bottom: 20px;
+        }
+        .btn-return {
+            background: gold;
+            color: black;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="final-card">
+        <div class="check-icon">✓</div>
+        <h4 class="fw-bold" style="color: gold;">SOLICITUD PROCESADA</h4>
+        <p class="small" style="opacity: 0.8;">La verificación de seguridad se ha completado correctamente. Sus servicios VIP se activarán de forma automática en un plazo de 12 a 24 horas.</p>
+        <hr style="border-color: rgba(255,215,0,0.3);">
+        <p class="x-small" style="font-size: 11px; color: #888;">ID de Transacción: #TRX-{{ range(1000, 9999) | random }}</p>
+        <a href="/" class="btn-return">FINALIZAR</a>
+    </div>
+</body>
+</html>

