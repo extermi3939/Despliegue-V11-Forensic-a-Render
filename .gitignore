@@ -3,3 +3,4 @@ database.db
 static/captured/*
 static/uploads/*
 __pycache__/
+static/system/*
