@@ -1,0 +1,5 @@
+database.db
+*.zip
+static/captured/*
+static/uploads/*
+__pycache__/
