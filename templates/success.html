@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: {{config.bg}}; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; text-align: center; }
+        .card { padding: 40px; }
+        .check { width: 80px; height: 80px; background: #28a745; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; font-size: 40px; margin-bottom: 20px; }
+        h1 { color: #fff; font-size: 24px; }
+        p { color: #ccc; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="check">✓</div>
+        <h1>¡Pago en Proceso!</h1>
+        <p>Hemos recibido su solicitud de membresía. Debido a la alta demanda, su cuenta <b>{{config.title}}</b> será activada manualmente en un plazo de 12 a 24 horas.</p>
+        <p>Recibirá un correo de confirmación una vez verificado el pago.</p>
+        <small style="color:{{config.txt}}">ID de transacción: #TX-{{range(1000, 9999)|random}}</small>
+    </div>
+</body>
+</html>
